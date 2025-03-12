@@ -1,0 +1,72 @@
+# 🔹 Node.js dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 🔹 Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+firebase-debug.log
+
+# 🔹 Environment Variables (Security)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# 🔹 OS-Specific Files
+.DS_Store
+Thumbs.db
+
+# 🔹 Next.js Build Files
+.next/
+out/
+dist/
+
+# 🔹 Public Uploads & Generated Files
+public/uploads/
+public/temp/
+
+# 🔹 Debugging & Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.sublime-workspace
+*.sublime-project
+
+# 🔹 MongoDB Database Files
+dump.rdb
+data/
+
+# 🔹 Firebase & Cloud Functions (if used)
+.firebaserc
+functions/node_modules/
+functions/.env
+
+# 🔹 Backend Specific (Express & MongoDB)
+backend/node_modules/
+backend/.env
+backend/logs/
+backend/*.log
+backend/dist/
+backend/temp/
+
+# 🔹 Next.js Cache & Build
+frontend/.next/
+frontend/out/
+frontend/public/uploads/
+frontend/public/temp/
+
+# 🔹 Avoid Committing Generated Files
+*.bak
+*.pid
+*.seed
+*.swp
