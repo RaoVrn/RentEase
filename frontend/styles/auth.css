@@ -1,0 +1,121 @@
+/* Container with fade-in animation and subtle gradient overlay */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0f1c, #121c31);
+  animation: fadeIn 1s ease-in-out;
+  padding: 20px;
+}
+
+/* Auth Box Styling with a soft glassmorphism effect */
+.auth-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  width: 360px;
+  transform: translateY(-20px);
+  animation: slideIn 0.8s forwards;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Headings & Subtext */
+.auth-box h2 {
+  color: #fff;
+  font-size: 28px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.auth-box .subtext {
+  color: #ccc;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Input Group Styling */
+.auth-box .input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+.auth-box .input-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #ddd;
+  transition: color 0.3s ease;
+}
+.auth-box .input-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 15px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 8px;
+}
+
+/* Placeholder styling */
+.auth-box .input-group input::placeholder {
+  color: #ddd;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* Input Focus State */
+.auth-box .input-group input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.8);
+}
+
+/* Button Styling with hover and active state animations */
+.auth-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #60a5fa;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s;
+  margin-top: 10px;
+}
+.auth-btn:hover {
+  background: #1e90ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30, 144, 255, 0.4);
+}
+.auth-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Switch link styling with color transition */
+.auth-box .switch a {
+  color: #60a5fa;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.auth-box .switch a:hover {
+  color: #1e90ff;
+}
+
+/* Keyframes for smooth fade and slide animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

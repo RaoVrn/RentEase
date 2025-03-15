@@ -23,15 +23,33 @@ export default function Register() {
           <form onSubmit={handleRegister}>
             <div className="input-group">
               <label>Name</label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
+                required
+              />
             </div>
             <div className="input-group">
               <label>Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
             </div>
             <div className="input-group">
               <label>Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                required
+              />
             </div>
             <button type="submit" className="auth-btn">Sign Up</button>
           </form>
