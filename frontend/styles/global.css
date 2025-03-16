@@ -324,6 +324,39 @@ body {
   background: rgba(0, 0, 0, 0.85);
 }
 
+/* 📊 Rental Price Comparison Section */
+.price-comparison {
+  text-align: center;
+  padding: 50px 20px;
+  margin-top: 40px;
+  background: linear-gradient(135deg, #161d2f, #1f2a40); /* Dark Theme Matching Background */
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.price-comparison h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #ffffff; /* White text for contrast */
+}
+
+/* 📊 Chart Container */
+.chart-container {
+  width: 90%;
+  max-width: 700px;
+  height: 350px;
+  margin: auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05); /* Subtle dark overlay */
+  border-radius: 12px;
+  box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* 📈 Chart Text & Labels */
+.chart-container canvas {
+  color: white !important; /* Ensure chart text stays white */
+}
 
 /* 🦶 Footer */
 .footer {
@@ -372,6 +405,11 @@ body {
   .city-card.second-row {
     margin-left: 40px;
   }
+
+  .chart-container {
+    width: 95%;
+    height: 300px;
+  }
 }
 
 
@@ -381,5 +419,9 @@ body {
   }
   .city-card.second-row {
     margin-left: 0;
+  }
+
+  .chart-container {
+    height: 280px;
   }
 }

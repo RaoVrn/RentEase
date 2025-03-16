@@ -4,8 +4,13 @@ import axios from "axios";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Slider from "rc-slider"; 
-import "rc-slider/assets/index.css"; 
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Home() {
   const router = useRouter();
@@ -67,7 +72,6 @@ export default function Home() {
           <h1>Find Your Dream Rental</h1>
           <p>Discover verified houses, flats, and PGs for rent.</p>
           <div className="search-bar">
-
             <select className="city-dropdown" onChange={(e) => setFilters({ ...filters, city: e.target.value })}>
               <option value="">Select City</option>
               {cities.map((city, index) => <option key={index} value={city}>{city}</option>)}
@@ -123,6 +127,48 @@ export default function Home() {
               <h3>{city.name}</h3>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 📊 Rental Price Comparison Section */}
+      <section className="price-comparison">
+        <h2>Rental Price Comparison</h2>
+        <div className="chart-container">
+          <Bar
+            data={{
+              labels: ["Mumbai", "Delhi", "Bangalore", "Chennai", "Hyderabad"],
+              datasets: [
+                {
+                  label: "Average Rent (₹ per month)",
+                  data: [45000, 38000, 40000, 35000, 32000],
+                  backgroundColor: ["#4CAF50", "#2196F3", "#FF9800", "#E91E63", "#9C27B0"],
+                  borderRadius: 6
+                }
+              ]
+            }}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: true, position: "top" }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    color: "white",
+                    font: { size: 14 }
+                  }
+                },
+                x: {
+                  ticks: {
+                    color: "white",
+                    font: { size: 14 }
+                  }
+                }
+              }
+            }}
+          />
         </div>
       </section>
 
