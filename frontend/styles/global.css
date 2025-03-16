@@ -224,32 +224,106 @@ body {
   gap: 20px;
 }
 
-/* 📦 Property Cards */
-.property-card {
-  background: rgba(255, 255, 255, 0.1);
+/* 🌆 Popular Cities Section */
+.popular-cities {
+  text-align: center;
+  padding: 50px 20px;
+  margin-top: 40px;
+}
+
+.popular-cities h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* 🔲 City Grid (Two Rows with Staggered Effect) */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 20px;
+  justify-content: center;
+  align-items: start;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-  text-align: left;
-  width: 300px;
-  backdrop-filter: blur(10px);
-  transition: 0.3s;
+  position: relative;
 }
 
-.property-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+/* 📌 City Cards */
+.city-card {
+  width: auto; /* Dynamic width */
+  max-width: 280px; /* Smaller size for a better layout */
+  text-align: center;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  position: relative;
+  animation: fadeInUp 0.7s ease-in-out;
 }
 
-.property-card img {
+/* 🌟 First Row - Starts from Left */
+.city-card.first-row {
+  margin-left: 0;
+}
+
+/* 🎯 Second Row - Staggered Position */
+.city-card.second-row {
+  margin-left: 140px; /* Adjusted to start from the middle of first image */
+}
+
+/* 🔄 Fade-in Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📸 Dynamic Image Sizing */
+.city-card img {
+  display: block;
   width: 100%;
-  border-radius: 10px;
+  height: auto;
+  border-radius: 14px;
+  transition: transform 0.4s ease-in-out;
 }
 
-.property-card h3 {
-  margin: 10px 0;
-  font-size: 20px;
+/* 🌟 Title on Images */
+.city-card h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  padding: 8px 15px;
+  border-radius: 8px;
+  width: 80%;
+  text-align: center;
+  transition: background 0.3s ease-in-out;
 }
+
+/* 🔥 Hover Effect */
+.city-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.5);
+}
+
+.city-card:hover img {
+  transform: scale(1.06);
+}
+
+.city-card:hover h3 {
+  background: rgba(0, 0, 0, 0.85);
+}
+
 
 /* 🦶 Footer */
 .footer {
@@ -271,6 +345,15 @@ body {
 }
 
 /* 📱 Mobile Responsive */
+@media (max-width: 1024px) {
+  .city-grid {
+    grid-template-columns: repeat(2, auto);
+  }
+  .city-card.second-row {
+    margin-left: 80px;
+  }
+}
+
 @media (max-width: 768px) {
   .search-bar {
       flex-direction: column;
@@ -281,5 +364,22 @@ body {
   .search-bar input,
   .search-bar button {
       width: 100%;
+  }
+
+  .city-grid {
+    grid-template-columns: repeat(2, auto);
+  }
+  .city-card.second-row {
+    margin-left: 40px;
+  }
+}
+
+
+@media (max-width: 500px) {
+  .city-grid {
+    grid-template-columns: repeat(1, auto);
+  }
+  .city-card.second-row {
+    margin-left: 0;
   }
 }
