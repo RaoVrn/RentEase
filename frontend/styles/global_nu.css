@@ -1,0 +1,14 @@
+/* 🌍 Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+  }
+  
+  /* 🌙 Dark Mode Background */
+  body {
+    background: linear-gradient(135deg, #0a0f1c, #121c31);
+    color: white;
+  }
+  

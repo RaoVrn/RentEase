@@ -1,0 +1,27 @@
+/* 🔍 Search Bar */
+.search-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    backdrop-filter: blur(15px);
+  }
+  
+  /* Inputs and Select Dropdowns */
+  .search-bar select,
+  .search-bar input {
+    padding: 14px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease-in-out;
+    width: 200px;
+    text-align: center;
+  }
+  

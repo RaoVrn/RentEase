@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FaUserCircle } from "react-icons/fa"; // Importing User Icon
+// import styles from "../styles/navbar.module.css";
 
 export default function Navbar() {
   return (

@@ -1,0 +1,10 @@
+/* 🏡 Featured Properties Section */
+.featured-properties {
+    text-align: center;
+    padding: 50px 20px;
+    margin-top: 40px;
+    background: linear-gradient(135deg, #1a1f36, #2b2f48);
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
+  

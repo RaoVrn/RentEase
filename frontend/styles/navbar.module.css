@@ -1,0 +1,33 @@
+/* 🔹 Navbar */
+.navbar {
+    background: rgba(10, 15, 28, 0.8);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+  }
+  
+  .logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #60a5fa;
+    text-decoration: none;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #ddd;
+    font-weight: 600;
+    transition: color 0.3s;
+  }
+  
+  .nav-links a:hover {
+    color: #60a5fa;
+  }
+  

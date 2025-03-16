@@ -1,0 +1,13 @@
+/* 🌆 Popular Cities Section */
+.popular-cities {
+    text-align: center;
+    padding: 50px 20px;
+    margin-top: 40px;
+  }
+  
+  .popular-cities h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  

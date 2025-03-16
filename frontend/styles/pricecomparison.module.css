@@ -1,0 +1,10 @@
+/* 📊 Rental Price Comparison Section */
+.price-comparison {
+    text-align: center;
+    padding: 50px 20px;
+    margin-top: 40px;
+    background: linear-gradient(135deg, #161d2f, #1f2a40);
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
+  

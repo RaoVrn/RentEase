@@ -1,0 +1,11 @@
+/* 🏢 Who Are We? Section */
+.who-we-are {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #111827, #1e293b);
+    border-radius: 16px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeIn 1.2s ease-in-out forwards;
+  }
+  
