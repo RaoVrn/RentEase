@@ -4,19 +4,14 @@ import cors from "cors";
 import mongoose from "mongoose";
 import propertyRoutes from "./routes/propertyRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-<<<<<<< HEAD
 import geminiRoutes from "./routes/geminiRoutes.js"; // ✅ Import Gemini Route
-=======
-import fetch from "node-fetch"; // Import fetch to call Python FastAPI
->>>>>>> 7b13642 (Enhance Keyara UI, integrate auth, connect backend)
+import fetch from "node-fetch"; // ✅ Import fetch to call Python FastAPI
 
 dotenv.config(); // Load environment variables
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-<<<<<<< HEAD
-=======
 
 // ✅ Connect to MongoDB with better error handling
 const connectDB = async () => {
@@ -34,7 +29,6 @@ const connectDB = async () => {
 connectDB();
 
 // ✅ API Routes
->>>>>>> 7b13642 (Enhance Keyara UI, integrate auth, connect backend)
 app.use("/api/properties", propertyRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/gemini", geminiRoutes); // ✅ Ensure this is added
