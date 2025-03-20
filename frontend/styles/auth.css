@@ -1,4 +1,4 @@
-/* Container with fade-in animation and subtle gradient overlay */
+/* Main Container */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -9,18 +9,17 @@
   padding: 20px;
 }
 
-/* Auth Box Styling with a soft glassmorphism effect */
+/* Auth Box: Glassmorphism Effect */
 .auth-box {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 40px 30px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 50px 40px;
   border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(15px);
   text-align: center;
-  width: 360px;
-  transform: translateY(-20px);
+  width: 420px;
   animation: slideIn 0.8s forwards;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Headings & Subtext */
@@ -37,69 +36,119 @@
   font-size: 14px;
 }
 
-/* Input Group Styling */
+/* Input Group */
 .auth-box .input-group {
   margin-bottom: 15px;
   text-align: left;
+  position: relative;
 }
 .auth-box .input-group label {
   display: block;
   font-size: 14px;
   margin-bottom: 6px;
   color: #ddd;
+  font-weight: 500;
   transition: color 0.3s ease;
 }
-.auth-box .input-group input {
+
+/* Input Fields */
+.auth-box .input-group input,
+.auth-box .input-group select {
   width: 100%;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
-  font-size: 15px;
+  font-size: 16px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
   margin-bottom: 8px;
 }
 
-/* Placeholder styling */
-.auth-box .input-group input::placeholder {
+/* Placeholder Styling */
+.auth-box .input-group input::placeholder, 
+.auth-box .input-group select {
   color: #ddd;
   opacity: 0.8;
   font-style: italic;
 }
 
-/* Input Focus State */
-.auth-box .input-group input:focus {
+/* Focus Effect */
+.auth-box .input-group input:focus,
+.auth-box .input-group select:focus {
   outline: none;
   background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 8px rgba(96, 165, 250, 0.8);
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.9);
 }
 
-/* Button Styling with hover and active state animations */
+/* Password Input Group with Eye Icon */
+.password-group {
+  position: relative;
+}
+.password-group input {
+  padding-right: 45px;
+}
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #ddd;
+  cursor: pointer;
+  font-size: 18px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+.eye-icon:hover {
+  color: #60a5fa;
+  transform: scale(1.1);
+}
+
+/* Button Styling */
 .auth-btn {
   width: 100%;
   padding: 12px;
   border: none;
-  border-radius: 10px;
-  background: #60a5fa;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #60a5fa, #1e90ff);
   color: #fff;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s;
   margin-top: 10px;
 }
 .auth-btn:hover {
-  background: #1e90ff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(30, 144, 255, 0.4);
+  background: linear-gradient(90deg, #1e90ff, #60a5fa);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(30, 144, 255, 0.5);
 }
 .auth-btn:active {
   transform: translateY(0);
   box-shadow: none;
 }
 
-/* Switch link styling with color transition */
+/* Select Dropdown Styling */
+.auth-box .input-group select {
+  cursor: pointer;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 16px;
+}
+.auth-box .input-group select:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Link Styling */
+.auth-box .switch {
+  margin-top: 15px;
+  color: #ccc;
+  font-size: 14px;
+}
 .auth-box .switch a {
   color: #60a5fa;
   font-weight: 500;
@@ -110,7 +159,7 @@
   color: #1e90ff;
 }
 
-/* Keyframes for smooth fade and slide animations */
+/* Keyframe Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -118,4 +167,12 @@
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 450px) {
+  .auth-box {
+    width: 95%;
+    padding: 30px;
+  }
 }
