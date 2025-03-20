@@ -70,3 +70,9 @@ frontend/public/temp/
 *.pid
 *.seed
 *.swp
+
+# Ignore Python cache files
+backend/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/**/*.pyd
