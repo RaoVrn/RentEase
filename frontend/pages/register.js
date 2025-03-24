@@ -1,21 +1,29 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { AuthContext } from "../pages/_app"; // ✅ Importing Global Auth Context
 
 export default function Register() {
+  const { setUser } = useContext(AuthContext); // ✅ Access global auth state
+  const router = useRouter();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("tenant"); // ✅ Default role is "tenant"
-  const [phone, setPhone] = useState(""); // ✅ Optional phone field
+  const [role, setRole] = useState("tenant"); // ✅ Default role: Tenant
+  const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // ✅ Validate phone number format (Only digits, 10-15 characters)
+  // ✅ Validate email format
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+
+  // ✅ Validate phone number format (10-15 digits)
   const isValidPhone = (phone) => /^[0-9]{10,15}$/.test(phone);
 
   const handleRegister = async (e) => {
@@ -23,23 +31,41 @@ export default function Register() {
     setLoading(true);
     setErrorMessage(""); // ✅ Clear previous errors
 
-    // ✅ Validate phone number (if provided)
+    // ✅ Input Validations
+    if (name.trim().length < 3) {
+      setLoading(false);
+      setErrorMessage("❌ Name must be at least 3 characters long.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setLoading(false);
+      setErrorMessage("❌ Invalid email format.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setLoading(false);
+      setErrorMessage("❌ Password must be at least 6 characters long.");
+      return;
+    }
+
     if (phone && !isValidPhone(phone)) {
       setLoading(false);
       setErrorMessage("❌ Phone number must be between 10-15 digits.");
       return;
     }
 
-    // ✅ Ensure role is always sent in lowercase
-    const userData = { 
-      name, 
-      email, 
-      password, 
-      role: role.toLowerCase() || "tenant",  // ✅ Ensure role is always sent
-      phone: phone || null  // ✅ Ensure phone is included
+    // ✅ Prepare user data
+    const userData = {
+      name,
+      email,
+      password,
+      role: role.toLowerCase() || "tenant", // ✅ Ensure lowercase role
+      phone: phone || null,
     };
-    
-    console.log("📌 Sending Data to Backend:", userData); // ✅ Debugging
+
+    console.log("📌 Sending Registration Request:", userData);
 
     try {
       const response = await fetch("http://localhost:5000/api/users/register", {
@@ -49,11 +75,32 @@ export default function Register() {
       });
 
       const data = await response.json();
-      console.log("📌 Server Response:", data); // ✅ Debugging
+      console.log("📌 Server Response:", data);
 
       if (response.ok) {
-        alert("✅ Registration Successful! You can now log in.");
-        window.location.href = "/login"; // ✅ Redirect to login page
+        alert("✅ Registration Successful! Logging you in...");
+        
+        // Auto-login after successful registration
+        const loginResponse = await fetch("http://localhost:5000/api/users/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, role }),
+        });
+
+        const loginData = await loginResponse.json();
+        if (loginResponse.ok) {
+          localStorage.setItem("user", JSON.stringify(loginData));
+          setUser(loginData); // ✅ Store user data globally
+
+          // ✅ Redirect based on user role
+          if (role === "tenant") {
+            router.push("/tenant");
+          } else {
+            router.push("/landlord-dashboard");
+          }
+        } else {
+          router.push("/login"); // If login fails, redirect to login page
+        }
       } else {
         setErrorMessage("❌ Registration Failed: " + data.message);
       }
@@ -63,7 +110,7 @@ export default function Register() {
     } finally {
       setLoading(false);
     }
-  }; // ✅ Function properly closed
+  };
 
   return (
     <div>
@@ -72,9 +119,9 @@ export default function Register() {
         <div className="auth-box">
           <h2>Create Account</h2>
           <p className="subtext">Join us and start renting today</p>
-          
+
           {/* ✅ Display error messages */}
-          {errorMessage && <p className="error-message">{errorMessage}</p>} 
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
 
           <form onSubmit={handleRegister}>
             <div className="input-group">

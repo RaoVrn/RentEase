@@ -1,0 +1,199 @@
+/* 🌟 Tenant Dashboard Main Container */
+.tenantDashboard {
+  min-height: 100vh;
+  display: flex;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+}
+
+/* 📂 Sidebar */
+.sidebar {
+  background: #1e293b;
+  width: 230px;
+  min-height: 100vh;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #60a5fa;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin: 12px 0;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: #cbd5e1;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.sidebar a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #60a5fa;
+}
+
+/* 🏠 Main Content */
+.mainContent {
+  flex: 1;
+  padding: 40px;
+  margin-left: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* 🔥 Header */
+.header {
+  font-size: 34px;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 15px;
+}
+
+.description {
+  color: #94a3b8;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* 📊 Dashboard Cards */
+.dashboardCards {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🎨 Clean, Professional Cards */
+.dashboardCard {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* ✨ Simple Hover Effect */
+.dashboardCard:hover {
+  box-shadow: 0px 8px 22px rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+}
+
+/* 📂 Large Icons */
+.dashboardCardIcon {
+  font-size: 80px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+/* 📌 Card Text */
+.dashboardCardText {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.dashboardCardSubtext {
+  font-size: 16px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+/* 📊 Chart Section */
+.chartContainer {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  margin-top: 40px;
+  width: 80%;
+  max-width: 900px;
+}
+
+/* 📌 Chart Title */
+.chartTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 20px;
+  color: #ffffff;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 768px) {
+  .tenantDashboard {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .mainContent {
+    margin-left: 0;
+    padding: 20px;
+    width: 100%;
+  }
+
+  .dashboardCards {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboardCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .dashboardCardIcon {
+    font-size: 70px;
+    padding: 10px;
+  }
+
+  .dashboardCardText {
+    font-size: 22px;
+  }
+
+  .dashboardCardSubtext {
+    font-size: 14px;
+  }
+
+  .chartContainer {
+    width: 100%;
+    padding: 20px;
+  }
+}

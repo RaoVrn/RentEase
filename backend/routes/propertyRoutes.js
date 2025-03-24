@@ -3,10 +3,13 @@ import Property from "../models/Property.js";
 
 const router = express.Router();
 
-// ✅ Route: Get distinct filter options for properties
+/**
+ * @route   GET /api/properties/filters
+ * @desc    Get distinct filter options for properties
+ */
 router.get("/filters", async (req, res) => {
   try {
-    console.log("Fetching property filters...");
+    console.log("📦 Fetching property filters...");
 
     const cities = await Property.distinct("city");
     const bhkOptions = await Property.distinct("bhk");
@@ -14,47 +17,70 @@ router.get("/filters", async (req, res) => {
     const tenantPreferences = await Property.distinct("tenantPreferred");
     const areaTypes = await Property.distinct("areaType");
 
-    console.log("Filters fetched successfully.");
-    res.json({ cities, bhkOptions, furnishingStatuses, tenantPreferences, areaTypes });
+    console.log("✅ Filters fetched successfully.");
+    res.json({
+      cities,
+      bhkOptions,
+      furnishingStatuses,
+      tenantPreferences,
+      areaTypes,
+    });
   } catch (error) {
-    console.error("Error fetching filter options:", error.message);
-    res.status(500).json({ message: "Server error while fetching filter options" });
+    console.error("❌ Error fetching filter options:", error.message);
+    res
+      .status(500)
+      .json({ message: "Server error while fetching filter options" });
   }
 });
 
-// ✅ Route: Get properties based on filters
+/**
+ * @route   GET /api/properties
+ * @desc    Get all properties or filter by query
+ */
 router.get("/", async (req, res) => {
   try {
-    console.log("Fetching properties with filters:", req.query);
+    console.log("🔍 Fetching properties with filters:", req.query);
 
-    let filters = {};
+    const {
+      city,
+      bhk,
+      furnishingStatus,
+      tenantPreferred,
+      areaType,
+      locality,
+      minPrice,
+      maxPrice,
+    } = req.query;
 
-    if (req.query.city) filters.city = req.query.city;
-    if (req.query.bhk) filters.bhk = Number(req.query.bhk);
-    if (req.query.furnishingStatus) filters.furnishingStatus = req.query.furnishingStatus;
-    if (req.query.tenantPreferred) filters.tenantPreferred = req.query.tenantPreferred;
-    if (req.query.areaType) filters.areaType = req.query.areaType;
-    if (req.query.locality) filters.areaLocality = new RegExp(`^${req.query.locality.trim()}$`, "i");
+    const filters = {};
 
-    if (req.query.minPrice || req.query.maxPrice) {
+    if (city) filters.city = city;
+    if (bhk) filters.bhk = Number(bhk);
+    if (furnishingStatus) filters.furnishingStatus = furnishingStatus;
+    if (tenantPreferred) filters.tenantPreferred = tenantPreferred;
+    if (areaType) filters.areaType = areaType;
+    if (locality)
+      filters.areaLocality = new RegExp(`^${locality.trim()}$`, "i");
+
+    if (minPrice || maxPrice) {
       filters.rent = {};
-      if (req.query.minPrice) filters.rent.$gte = Number(req.query.minPrice);
-      if (req.query.maxPrice) filters.rent.$lte = Number(req.query.maxPrice);
+      if (minPrice) filters.rent.$gte = Number(minPrice);
+      if (maxPrice) filters.rent.$lte = Number(maxPrice);
     }
 
-    console.log("Applying filters:", filters);
-    
+    console.log("📌 Final query filters:", filters);
+
     const properties = await Property.find(filters);
 
-    if (!properties.length) {
-      return res.status(404).json({ message: "No property available for the selected filters." });
-    }
+    console.log(`✅ Found ${properties.length} properties.`);
 
-    console.log(`Found ${properties.length} properties.`);
+    // Send an empty array instead of 404 to avoid frontend crashing
     res.json(properties);
   } catch (error) {
-    console.error("Error fetching properties:", error.message);
-    res.status(500).json({ message: "Server error while fetching properties" });
+    console.error("❌ Error fetching properties:", error.message);
+    res
+      .status(500)
+      .json({ message: "Server error while fetching properties" });
   }
 });
 
