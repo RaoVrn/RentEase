@@ -8,30 +8,26 @@ import Footer from "../components/Footer";
 import { AuthContext } from "../pages/_app"; // ✅ Importing Global Auth Context
 
 export default function Register() {
-  const { setUser } = useContext(AuthContext); // ✅ Access global auth state
+  const { setUser } = useContext(AuthContext);
   const router = useRouter();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("tenant"); // ✅ Default role: Tenant
+  const [role, setRole] = useState("tenant");
   const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // ✅ Validate email format
   const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
-
-  // ✅ Validate phone number format (10-15 digits)
   const isValidPhone = (phone) => /^[0-9]{10,15}$/.test(phone);
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(""); // ✅ Clear previous errors
+    setErrorMessage("");
 
-    // ✅ Input Validations
     if (name.trim().length < 3) {
       setLoading(false);
       setErrorMessage("❌ Name must be at least 3 characters long.");
@@ -56,16 +52,13 @@ export default function Register() {
       return;
     }
 
-    // ✅ Prepare user data
     const userData = {
       name,
       email,
       password,
-      role: role.toLowerCase() || "tenant", // ✅ Ensure lowercase role
+      role: role.toLowerCase(),
       phone: phone || null,
     };
-
-    console.log("📌 Sending Registration Request:", userData);
 
     try {
       const response = await fetch("http://localhost:5000/api/users/register", {
@@ -75,32 +68,19 @@ export default function Register() {
       });
 
       const data = await response.json();
-      console.log("📌 Server Response:", data);
 
       if (response.ok) {
-        alert("✅ Registration Successful! Logging you in...");
-        
-        // Auto-login after successful registration
-        const loginResponse = await fetch("http://localhost:5000/api/users/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password, role }),
-        });
+        alert("✅ Registration Successful! Please login to continue.");
 
-        const loginData = await loginResponse.json();
-        if (loginResponse.ok) {
-          localStorage.setItem("user", JSON.stringify(loginData));
-          setUser(loginData); // ✅ Store user data globally
+        // ✅ Clear form fields
+        setName("");
+        setEmail("");
+        setPassword("");
+        setPhone("");
+        setRole("tenant");
 
-          // ✅ Redirect based on user role
-          if (role === "tenant") {
-            router.push("/tenant");
-          } else {
-            router.push("/landlord-dashboard");
-          }
-        } else {
-          router.push("/login"); // If login fails, redirect to login page
-        }
+        // ✅ Redirect to login page
+        router.push("/login");
       } else {
         setErrorMessage("❌ Registration Failed: " + data.message);
       }
@@ -120,7 +100,6 @@ export default function Register() {
           <h2>Create Account</h2>
           <p className="subtext">Join us and start renting today</p>
 
-          {/* ✅ Display error messages */}
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
           <form onSubmit={handleRegister}>
