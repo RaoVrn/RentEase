@@ -4,17 +4,21 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
 import http from "http";
+import fetch from "node-fetch";
+
 import propertyRoutes from "./routes/propertyRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import geminiRoutes from "./routes/geminiRoutes.js";
-import tenantRoutes from "./routes/tenantRoutes.js"; // ✅ Added Tenant Routes
-import fetch from "node-fetch";
-import RentApplication from "./models/RentApplication.js"; // ✅ Import RentApplication Model
+import tenantRoutes from "./routes/tenantRoutes.js";
+
+import RentApplication from "./models/RentApplication.js";
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+
+// ✅ Socket.IO setup
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:3000",
@@ -22,7 +26,7 @@ const io = new Server(server, {
     }
 });
 
-// ✅ Connect to MongoDB
+// ✅ MongoDB Connection
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI, {
@@ -37,6 +41,7 @@ const connectDB = async () => {
 };
 connectDB();
 
+// ✅ Middleware
 app.use(express.json());
 app.use(cors());
 
@@ -46,7 +51,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/tenant", tenantRoutes);
 
-// ✅ WebSocket for Real-Time Updates
+// ✅ WebSocket for real-time updates
 io.on("connection", (socket) => {
     console.log("🟢 Client connected:", socket.id);
 
@@ -55,7 +60,7 @@ io.on("connection", (socket) => {
             const applications = await RentApplication.find({ tenantId })
                 .populate("propertyId")
                 .populate("tenantId", "name email");
-            
+
             socket.emit("applicationsData", applications);
         } catch (error) {
             console.error("❌ Error fetching applications:", error);
@@ -67,7 +72,7 @@ io.on("connection", (socket) => {
     });
 });
 
-// ✅ Route to Forward Request to FastAPI
+// ✅ Forward requests to FastAPI Gemini backend
 app.post("/api/gemini/generate", async (req, res) => {
     try {
         const response = await fetch("http://localhost:8000/api/gemini/generate", {
@@ -88,16 +93,17 @@ app.post("/api/gemini/generate", async (req, res) => {
     }
 });
 
-// ✅ Default Route
+// ✅ Default and 404 routes
 app.get("/", (req, res) => {
     res.send("Welcome to the RentEase API 🚀");
 });
 
-// ✅ 404 Route Handler
 app.use((req, res) => {
     res.status(404).json({ error: "Route not found" });
 });
 
-// ✅ Start Server with WebSocket
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});

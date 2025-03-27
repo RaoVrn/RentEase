@@ -1,11 +1,36 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, required: true, default: "tenant" },  // ✅ Ensure role is saved
-  phone: { type: String, default: null },  // ✅ Ensure phone is saved
-}, { timestamps: true });
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+    },
+    role: {
+      type: String,
+      enum: ["tenant", "landlord"],
+      default: "tenant",
+      required: true,
+    },
+    phone: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model("User", UserSchema);

@@ -1,14 +1,18 @@
 import express from "express";
 import User from "../models/User.js";
+import Property from "../models/Property.js"; // ✅ Import Property model
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-dotenv.config(); 
+dotenv.config();
 
 const router = express.Router();
 
-// ✅ Middleware: Authenticate JWT Token
+// =======================
+// 🔐 Middleware
+// =======================
+
 const authenticateToken = (req, res, next) => {
   const token = req.header("Authorization")?.split(" ")[1];
   if (!token) {
@@ -25,31 +29,31 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// ✅ Middleware: Restrict to Tenants Only
 const authenticateTenant = (req, res, next) => {
   authenticateToken(req, res, () => {
     if (req.user.role !== "tenant") {
-      return res.status(403).json({ message: "Unauthorized. Only tenants can access this feature." });
+      return res.status(403).json({ message: "Unauthorized. Only tenants allowed." });
     }
     next();
   });
 };
 
-// ✅ Middleware: Restrict to Landlords Only
 const authenticateLandlord = (req, res, next) => {
   authenticateToken(req, res, () => {
     if (req.user.role !== "landlord") {
-      return res.status(403).json({ message: "Unauthorized. Only landlords can access this feature." });
+      return res.status(403).json({ message: "Unauthorized. Only landlords allowed." });
     }
     next();
   });
 };
 
-// ✅ User Registration
+// =======================
+// 📝 Register
+// =======================
 router.post("/register", async (req, res) => {
-  let { name, email, password, role, phone } = req.body;
+  const { name, email, password, role, phone } = req.body;
 
-  console.log("📌 Received Registration Data:", req.body);
+  console.log("📌 Register Payload:", req.body);
 
   try {
     if (!name || !email || !password) {
@@ -58,65 +62,78 @@ router.post("/register", async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log("❌ User already exists!");
       return res.status(400).json({ message: "User already exists" });
     }
 
-    console.log("📌 Hashing Password...");
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({ name, email, password: hashedPassword, role, phone });
     await newUser.save();
 
-    console.log("✅ User Registered Successfully:", newUser);
-    res.status(201).json({ message: "User registered successfully", user: { id: newUser._id, name, email, role, phone } });
+    res.status(201).json({
+      message: "User registered successfully",
+      user: { id: newUser._id, name, email, role, phone },
+    });
   } catch (error) {
     console.error("❌ Registration Error:", error);
     res.status(500).json({ message: "Error registering user" });
   }
 });
 
-// ✅ User Login
+// =======================
+// 🔐 Login
+// =======================
 router.post("/login", async (req, res) => {
   const { email, password, role } = req.body;
-  console.log("📌 Received Login Data:", req.body);
+  console.log("📌 Login Attempt:", req.body);
 
   try {
-      const user = await User.findOne({ email });
-      if (!user) {
-          return res.status(400).json({ message: "User not found" });
-      }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User not found" });
 
-      if (user.role.trim().toLowerCase() !== role.trim().toLowerCase()) {
-          return res.status(400).json({ message: "Invalid role selected" });
-      }
+    if (user.role.trim().toLowerCase() !== role.trim().toLowerCase()) {
+      return res.status(400).json({ message: "Invalid role selected" });
+    }
 
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-          return res.status(400).json({ message: "Invalid credentials" });
-      }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return res.status(400).json({ message: "Invalid credentials" });
 
-      const token = jwt.sign(
-          { id: user._id.toString(), role: user.role },
-          process.env.JWT_SECRET,
-          { expiresIn: "1h" }
-      );
+    // ✅ Check propertyId for tenants
+    let propertyId = null;
+    if (user.role === "tenant") {
+      const property = await Property.findOne({ tenantId: user._id }).select("_id");
+      console.log("📦 Found property:", property); // ✅ moved inside
+      propertyId = property?._id || null;
+      console.log("📦 Assigned propertyId:", propertyId); // ✅ optional log
+    }
 
-      console.log("📌 Generated Token:", token); // ✅ Debugging
+    const token = jwt.sign(
+      { id: user._id.toString(), role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-      res.status(200).json({
-          message: "Login successful",
-          token, // ✅ Ensure this is sent
-          user: { id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone },
-      });
+    // ✅ Send response with propertyId
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        propertyId: propertyId,
+      },
+    });
   } catch (error) {
-      console.error("❌ Login Error:", error);
-      res.status(500).json({ message: "Error logging in" });
+    console.error("❌ Login Error:", error);
+    res.status(500).json({ message: "Error logging in" });
   }
 });
 
-
-// ✅ Get User Profile (Requires Authentication)
+// =======================
+// 👤 Get Profile
+// =======================
 router.get("/profile", authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -124,12 +141,11 @@ router.get("/profile", authenticateToken, async (req, res) => {
 
     res.json(user);
   } catch (error) {
-    console.error("❌ Profile Fetch Error:", error);
+    console.error("❌ Fetch Profile Error:", error);
     res.status(500).json({ message: "Error fetching user profile" });
   }
 });
 
-// ✅ Get Tenant Profile (Restricted to Tenants)
 router.get("/tenant/profile", authenticateTenant, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -142,49 +158,52 @@ router.get("/tenant/profile", authenticateTenant, async (req, res) => {
   }
 });
 
-// ✅ Get All Users (Only for Landlords)
+// =======================
+// 🔍 Admin: All Users
+// =======================
 router.get("/all", authenticateLandlord, async (req, res) => {
   try {
     const users = await User.find().select("-password");
     res.json(users);
   } catch (error) {
-    console.error("❌ Error fetching users:", error);
+    console.error("❌ Fetch All Users Error:", error);
     res.status(500).json({ message: "Error fetching users" });
   }
 });
 
-// ✅ Update User Profile
+// =======================
+// 🛠️ Update Profile
+// =======================
 router.put("/profile/update", authenticateToken, async (req, res) => {
+  const { name, phone } = req.body;
+
   try {
-    const { name, phone } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       { name, phone },
       { new: true, runValidators: true }
     ).select("-password");
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
 
-    res.json({ message: "Profile updated successfully", user: updatedUser });
+    res.json({ message: "Profile updated", user: updatedUser });
   } catch (error) {
-    console.error("❌ Profile Update Error:", error);
+    console.error("❌ Update Profile Error:", error);
     res.status(500).json({ message: "Error updating profile" });
   }
 });
 
-// ✅ Delete User (Restricted to Tenants)
+// =======================
+// ❌ Delete Account
+// =======================
 router.delete("/delete", authenticateTenant, async (req, res) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.user.id);
-    if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    const deleted = await User.findByIdAndDelete(req.user.id);
+    if (!deleted) return res.status(404).json({ message: "User not found" });
 
-    res.json({ message: "User account deleted successfully" });
+    res.json({ message: "Account deleted successfully" });
   } catch (error) {
-    console.error("❌ Account Deletion Error:", error);
+    console.error("❌ Delete Account Error:", error);
     res.status(500).json({ message: "Error deleting account" });
   }
 });

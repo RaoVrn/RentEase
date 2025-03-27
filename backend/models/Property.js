@@ -13,7 +13,18 @@ const propertySchema = new mongoose.Schema({
   tenantPreferred: { type: String, required: true },
   bathroom: { type: Number, required: true },
   pointOfContact: { type: String, required: true },
-  image: { type: String, required: false, default: "https://example.com/default-image.jpg" }
+  image: {
+    type: String,
+    required: false,
+    default: "https://example.com/default-image.jpg"
+  },
+
+  // ✅ Reference to Tenant
+  tenantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: false // Optional if not yet rented
+  }
 });
 
 const Property = mongoose.model("Property", propertySchema);

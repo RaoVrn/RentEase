@@ -1,9 +1,15 @@
 import express from "express";
+import mongoose from "mongoose";
 import RentApplication from "../models/RentApplication.js";
 import Payment from "../models/Payment.js";
 import MaintenanceRequest from "../models/MaintenanceRequest.js";
 
 const router = express.Router();
+
+
+// ==============================
+// 📄 Rental Applications Routes
+// ==============================
 
 // ✅ Get all rental applications for a tenant
 router.get("/applications/:tenantId", async (req, res) => {
@@ -23,7 +29,6 @@ router.get("/applications/:tenantId", async (req, res) => {
     }
 });
 
-
 // ✅ Get a single rental application by ID
 router.get("/application/:applicationId", async (req, res) => {
     try {
@@ -42,7 +47,7 @@ router.get("/application/:applicationId", async (req, res) => {
     }
 });
 
-// ✅ Update rental application status (Admin/Landlord only)
+// ✅ Update rental application status
 router.put("/application/:applicationId", async (req, res) => {
     const { status } = req.body;
 
@@ -67,6 +72,11 @@ router.put("/application/:applicationId", async (req, res) => {
         res.status(500).json({ message: "Server error while updating application." });
     }
 });
+
+
+// =======================
+// 💳 Payments Routes
+// =======================
 
 // ✅ Get all payments for a tenant
 router.get("/payments/:tenantId", async (req, res) => {
@@ -102,16 +112,29 @@ router.get("/payment/:paymentId", async (req, res) => {
     }
 });
 
+
+// ==============================
+// 🛠️ Maintenance Request Routes
+// ==============================
+
 // ✅ Submit a new maintenance request
 router.post("/maintenance", async (req, res) => {
-    const { tenantId, propertyId, description } = req.body;
+    const { tenantId, propertyId, title, description, status, date } = req.body;
 
-    if (!tenantId || !propertyId || !description) {
+    if (!tenantId || !propertyId || !title || !description) {
         return res.status(400).json({ message: "Missing required fields." });
     }
 
     try {
-        const request = new MaintenanceRequest(req.body);
+        const request = new MaintenanceRequest({
+            tenantId,
+            propertyId,
+            title,
+            description,
+            status: status || "Pending",
+            requestDate: date || Date.now()
+        });
+
         await request.save();
         res.status(201).json({ message: "Maintenance request submitted successfully.", request });
     } catch (error) {
@@ -122,14 +145,14 @@ router.post("/maintenance", async (req, res) => {
 
 // ✅ Get all maintenance requests for a tenant
 router.get("/maintenance/:tenantId", async (req, res) => {
+    const { tenantId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(tenantId)) {
+        return res.status(400).json({ message: "Invalid tenant ID." });
+    }
+
     try {
-        const requests = await MaintenanceRequest.find({ tenantId: req.params.tenantId })
-            .populate("propertyId");
-
-        if (!requests.length) {
-            return res.status(404).json({ message: "No maintenance requests found." });
-        }
-
+        const requests = await MaintenanceRequest.find({ tenantId }).populate("propertyId");
         res.json(requests);
     } catch (error) {
         console.error("❌ Error fetching maintenance requests:", error);
@@ -140,8 +163,7 @@ router.get("/maintenance/:tenantId", async (req, res) => {
 // ✅ Get a single maintenance request by ID
 router.get("/maintenance/request/:requestId", async (req, res) => {
     try {
-        const request = await MaintenanceRequest.findById(req.params.requestId)
-            .populate("propertyId");
+        const request = await MaintenanceRequest.findById(req.params.requestId).populate("propertyId");
 
         if (!request) {
             return res.status(404).json({ message: "Maintenance request not found." });
@@ -154,7 +176,7 @@ router.get("/maintenance/request/:requestId", async (req, res) => {
     }
 });
 
-// ✅ Update maintenance request status (Admin/Landlord only)
+// ✅ Update maintenance request status
 router.put("/maintenance/request/:requestId", async (req, res) => {
     const { status } = req.body;
 
@@ -179,5 +201,22 @@ router.put("/maintenance/request/:requestId", async (req, res) => {
         res.status(500).json({ message: "Server error while updating maintenance request." });
     }
 });
+
+// ✅ Delete a maintenance request
+router.delete("/maintenance/request/:requestId", async (req, res) => {
+    try {
+        const deleted = await MaintenanceRequest.findByIdAndDelete(req.params.requestId);
+
+        if (!deleted) {
+            return res.status(404).json({ message: "Maintenance request not found." });
+        }
+
+        res.json({ message: "Maintenance request deleted successfully." });
+    } catch (error) {
+        console.error("❌ Error deleting maintenance request:", error);
+        res.status(500).json({ message: "Server error while deleting request." });
+    }
+});
+
 
 export default router;

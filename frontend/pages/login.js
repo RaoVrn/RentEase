@@ -33,19 +33,35 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
+        const user = data.user;
+        
+        // ✅ Store in localStorage
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(user));
+        setUser(user);
 
-        // ✅ Clear form fields
+        // ✅ Save IDs if valid
+        if (user.id?.length === 24) {
+          localStorage.setItem("tenantId", user.id);
+        } else {
+          console.warn("⚠️ Invalid tenantId, not saved.");
+        }
+
+        if (user.propertyId?.length === 24) {
+          localStorage.setItem("propertyId", user.propertyId);
+        } else {
+          console.warn("⚠️ propertyId not found or invalid. Not saved.");
+        }
+
+        // ✅ Clear form
         setEmail("");
         setPassword("");
         setRole("tenant");
 
-        // ✅ Redirect based on role
+        // ✅ Redirect
         if (role === "tenant") {
           router.push("/tenant");
-        } else if (role === "landlord") {
+        } else {
           router.push("/landlord-dashboard");
         }
       } else {
