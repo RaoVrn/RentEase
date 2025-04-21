@@ -2,6 +2,9 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
     "axios": "^1.8.4",
-    "rc-slider": "^11.1.8"
+    "next-auth": "^4.24.11",
+    "rc-slider": "^11.1.8",
+    "react-icons": "^5.5.0",
+    "react-toastify": "^11.0.5"
   }
 }

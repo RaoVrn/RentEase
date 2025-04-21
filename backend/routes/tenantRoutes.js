@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import RentApplication from "../models/RentApplication.js";
 import Payment from "../models/Payment.js";
 import MaintenanceRequest from "../models/MaintenanceRequest.js";
+import Message from "../models/Message.js";
 
 const router = express.Router();
 
@@ -218,5 +219,37 @@ router.delete("/maintenance/request/:requestId", async (req, res) => {
     }
 });
 
+
+// ==============================
+// 💬 Messages Routes
+// ==============================
+
+// ✅ Send a new message
+router.post("/messages", async (req, res) => {
+    try {
+        const { from, to, text, tenantId } = req.body;
+
+        if (!from || !to || !text || !tenantId) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+
+        const message = await Message.create({ from, to, text, tenantId });
+        res.status(201).json(message);
+    } catch (error) {
+        console.error("❌ Error sending message:", error);
+        res.status(500).json({ message: "Server error while sending message." });
+    }
+});
+
+// ✅ Get all messages for a tenant
+router.get("/messages/:tenantId", async (req, res) => {
+    try {
+        const messages = await Message.find({ tenantId: req.params.tenantId }).sort({ createdAt: 1 });
+        res.json(messages);
+    } catch (error) {
+        console.error("❌ Error fetching messages:", error);
+        res.status(500).json({ message: "Server error while fetching messages." });
+    }
+});
 
 export default router;
