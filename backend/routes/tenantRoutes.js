@@ -4,6 +4,7 @@ import RentApplication from "../models/RentApplication.js";
 import Payment from "../models/Payment.js";
 import MaintenanceRequest from "../models/MaintenanceRequest.js";
 import Message from "../models/Message.js";
+import Property from "../models/Property.js";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -15,6 +16,22 @@ const authenticateToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(403).json({ message: "Invalid token" });
+  }
+};
+
+const authenticateLandlord = (req, res, next) => {
+  const token = req.header("Authorization")?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Access denied" });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== "landlord") {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
     req.user = decoded;
     next();
   } catch (error) {
@@ -51,6 +68,62 @@ router.get("/applications/:tenantId", async (req, res) => {
   }
 });
 
+// ✅ Get all rental applications for properties owned by a landlord
+router.get("/landlord/:landlordId/applications", authenticateLandlord, async (req, res) => {
+  const { landlordId } = req.params;
+
+  // Verify the authenticated landlord matches the requested landlordId
+  if (req.user.id !== landlordId) {
+    return res.status(403).json({ 
+      success: false,
+      message: "Unauthorized access to applications" 
+    });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(landlordId)) {
+    console.warn("❌ Invalid landlordId for applications:", landlordId);
+    return res.status(400).json({ 
+      success: false,
+      message: "Invalid landlord ID" 
+    });
+  }
+
+  try {
+    // First get all properties owned by this landlord
+    const properties = await Property.find({ landlordId }).select('_id');
+    
+    if (!properties.length) {
+      return res.status(200).json({ 
+        success: true,
+        message: "No properties found for landlord",
+        applications: [] 
+      });
+    }
+    
+    const propertyIds = properties.map(p => p._id);
+
+    // Then find all applications for these properties
+    const applications = await RentApplication.find({
+      propertyId: { $in: propertyIds }
+    })
+      .populate('propertyId')
+      .populate('tenantId', 'name email')
+      .sort({ submittedAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      applications
+    });
+  } catch (error) {
+    console.error("❌ Error fetching landlord applications:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Server error while fetching applications",
+      error: error.message 
+    });
+  }
+});
+
 // ✅ Get a single rental application by ID
 router.get("/application/:applicationId", async (req, res) => {
   try {
@@ -70,7 +143,7 @@ router.get("/application/:applicationId", async (req, res) => {
 });
 
 // ✅ Update rental application status
-router.put("/application/:applicationId", async (req, res) => {
+router.put("/application/:applicationId", authenticateLandlord, async (req, res) => {
   const { status } = req.body;
 
   if (!["Pending", "Approved", "Rejected"].includes(status)) {
@@ -78,20 +151,38 @@ router.put("/application/:applicationId", async (req, res) => {
   }
 
   try {
-    const updatedApplication = await RentApplication.findByIdAndUpdate(
-      req.params.applicationId,
-      { status },
-      { new: true }
-    );
+    // First get the application to check if landlord owns the property
+    const application = await RentApplication.findById(req.params.applicationId)
+      .populate('propertyId');
 
-    if (!updatedApplication) {
+    if (!application) {
       return res.status(404).json({ message: "Application not found." });
     }
 
-    res.json({ message: "Application status updated.", updatedApplication });
+    // Verify the landlord owns the property
+    if (application.propertyId.landlordId.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized to update this application." });
+    }
+
+    application.status = status;
+    application.updatedAt = new Date();
+    await application.save();
+
+    // Return populated application
+    const updatedApplication = await RentApplication.findById(application._id)
+      .populate('propertyId')
+      .populate('tenantId', 'name email');
+
+    res.json({ 
+      message: `Application ${status.toLowerCase()} successfully`, 
+      application: updatedApplication 
+    });
   } catch (error) {
     console.error("❌ Error updating application:", error);
-    res.status(500).json({ message: "Server error while updating application." });
+    res.status(500).json({ 
+      message: "Server error while updating application.",
+      error: error.message
+    });
   }
 });
 

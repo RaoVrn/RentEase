@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const propertySchema = new mongoose.Schema({
+  landlordId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
   postedOn: { type: Date, required: true },
   bhk: { type: Number, required: true },
   rent: { type: Number, required: true },
@@ -18,7 +23,6 @@ const propertySchema = new mongoose.Schema({
     required: false,
     default: "https://example.com/default-image.jpg"
   },
-
   // ✅ Reference to Tenant
   tenantId: {
     type: mongoose.Schema.Types.ObjectId,

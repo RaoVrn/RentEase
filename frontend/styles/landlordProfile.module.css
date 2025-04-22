@@ -1,0 +1,198 @@
+.profileContainer {
+    display: flex;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mainContent {
+    flex: 1;
+    padding: 2rem;
+    margin-left: 16rem;
+}
+
+.header {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.profileCard {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    display: flex;
+    gap: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #6366f1;
+}
+
+.fileInput {
+    width: 100%;
+    max-width: 200px;
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+.fileInput::file-selector-button {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    margin-right: 1rem;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+}
+
+.fileInput::file-selector-button:hover {
+    background: #4f46e5;
+}
+
+.profileInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.field {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 1rem;
+    align-items: center;
+}
+
+.field label {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.field p {
+    margin: 0;
+    color: #e2e8f0;
+}
+
+.input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    color: #e2e8f0;
+    font-size: 0.875rem;
+    width: 100%;
+    transition: border-color 0.2s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 1px #6366f1;
+}
+
+.actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.editButton,
+.saveButton,
+.cancelButton {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.editButton {
+    background: #6366f1;
+    color: white;
+    border: none;
+}
+
+.editButton:hover {
+    background: #4f46e5;
+}
+
+.saveButton {
+    background: #10b981;
+    color: white;
+    border: none;
+}
+
+.saveButton:hover {
+    background: #059669;
+}
+
+.cancelButton {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.cancelButton:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.loading,
+.error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-size: 1.25rem;
+}
+
+.loading {
+    color: #e2e8f0;
+}
+
+.error {
+    color: #ef4444;
+}
+
+@media (max-width: 768px) {
+    .mainContent {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .header {
+        font-size: 1.75rem;
+        text-align: center;
+    }
+
+    .profileCard {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 1.5rem;
+    }
+
+    .field {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}

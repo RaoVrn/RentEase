@@ -1,0 +1,93 @@
+.landlordSidebar {
+    width: 16rem;
+    background: linear-gradient(180deg, #1e293b, #0f172a);
+    height: 100vh;
+    color: #f1f5f9;
+    padding: 1.5rem;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.landlordSidebar h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    color: #e2e8f0;
+}
+
+.navList {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #f1f5f9;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.navItem:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navItem.active {
+    background-color: #6366f1;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.logoutButton {
+    margin-top: auto;
+    padding: 0.75rem;
+    background-color: #dc2626;
+    border: none;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.logoutButton:hover {
+    background-color: #b91c1c;
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .landlordSidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .navList {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .navItem {
+        flex: 1 1 auto;
+        min-width: 120px;
+        text-align: center;
+        justify-content: center;
+    }
+}

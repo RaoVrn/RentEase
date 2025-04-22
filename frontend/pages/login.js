@@ -35,12 +35,12 @@ export default function Login() {
       if (response.ok) {
         const user = data.user;
 
-        // ✅ Save token + user in localStorage
+        // Save token + user in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
 
-        // ✅ Save tenantId and propertyId if valid
+        // Save tenantId and propertyId if valid
         if (user.id?.length === 24) {
           localStorage.setItem("tenantId", user.id);
         }
@@ -49,16 +49,16 @@ export default function Login() {
           localStorage.setItem("propertyId", user.propertyId);
         }
 
-        // ✅ Clear form state
+        // Clear form state
         setEmail("");
         setPassword("");
         setRole("tenant");
 
-        // ✅ Redirect based on role
+        // Redirect based on role
         if (role === "tenant") {
           router.push("/tenant");
         } else {
-          router.push("/landlord-dashboard");
+          router.push("/landlord");
         }
       } else {
         setErrorMessage(data.message || "❌ Login failed. Please try again.");
