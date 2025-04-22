@@ -1,7 +1,7 @@
-import { useState, useEffect, createContext } from "react";
+// pages/_app.js
+import React, { createContext, useState, useEffect } from "react";
 import "../styles/global.css";
 import "../styles/auth.css";
-import "rc-slider/assets/index.css";
 
 export const AuthContext = createContext(null);
 
@@ -9,9 +9,15 @@ export default function App({ Component, pageProps }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored));
+        } catch (err) {
+          console.error("❌ Could not parse stored user:", err);
+        }
+      }
     }
   }, []);
 

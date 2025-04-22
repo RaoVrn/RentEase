@@ -28,19 +28,26 @@ const TenantDashboard = () => {
       return;
     }
 
+    const tenantId = user?._id;
+
+    if (!tenantId) {
+      console.warn("🚨 No tenantId available — skipping fetch");
+      return;
+    }
+
     async function fetchData() {
       try {
         const [appRes, payRes, maintRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/tenant/applications/${user._id}`).then((res) => res.json()),
-          fetch(`http://localhost:5000/api/tenant/payments/${user._id}`).then((res) => res.json()),
-          fetch(`http://localhost:5000/api/tenant/maintenance/${user._id}`).then((res) => res.json()),
+          fetch(`/api/applications/${tenantId}`).then((res) => res.json()),
+          fetch(`/api/payments/${tenantId}`).then((res) => res.json()),
+          fetch(`/api/maintenance/${tenantId}`).then((res) => res.json()),
         ]);
 
         setApplications(Array.isArray(appRes) ? appRes : []);
         setPayments(Array.isArray(payRes) ? payRes : []);
         setMaintenance(Array.isArray(maintRes) ? maintRes : []);
       } catch (error) {
-        console.error("❌ Error fetching data:", error);
+        console.error("❌ Error fetching tenant dashboard data:", error);
       } finally {
         setLoading(false);
       }
@@ -62,10 +69,7 @@ const TenantDashboard = () => {
 
         {/* Dashboard Cards */}
         <div className={styles.dashboardCards}>
-          <motion.div
-            className={styles.dashboardCard}
-            whileHover={{ scale: 1.05 }}
-          >
+          <motion.div className={styles.dashboardCard} whileHover={{ scale: 1.05 }}>
             <FaClipboardList
               className={styles.dashboardCardIcon}
               style={{ color: "#3b82f6" }}
@@ -78,10 +82,7 @@ const TenantDashboard = () => {
             </div>
           </motion.div>
 
-          <motion.div
-            className={styles.dashboardCard}
-            whileHover={{ scale: 1.05 }}
-          >
+          <motion.div className={styles.dashboardCard} whileHover={{ scale: 1.05 }}>
             <FaFileInvoiceDollar
               className={styles.dashboardCardIcon}
               style={{ color: "#10b981" }}
@@ -94,10 +95,7 @@ const TenantDashboard = () => {
             </div>
           </motion.div>
 
-          <motion.div
-            className={styles.dashboardCard}
-            whileHover={{ scale: 1.05 }}
-          >
+          <motion.div className={styles.dashboardCard} whileHover={{ scale: 1.05 }}>
             <FaTools
               className={styles.dashboardCardIcon}
               style={{ color: "#f43f5e" }}
@@ -106,9 +104,7 @@ const TenantDashboard = () => {
               <h2 className={styles.dashboardCardText}>
                 {maintenance.length}
               </h2>
-              <p className={styles.dashboardCardSubtext}>
-                Maintenance Requests
-              </p>
+              <p className={styles.dashboardCardSubtext}>Maintenance Requests</p>
             </div>
           </motion.div>
         </div>

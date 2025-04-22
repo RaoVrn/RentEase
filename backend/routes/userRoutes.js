@@ -1,23 +1,39 @@
 import express from "express";
 import User from "../models/User.js";
-import Property from "../models/Property.js"; // ✅ Import Property model
+import Property from "../models/Property.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 const router = express.Router();
+
+// =======================
+// 🗂️ Multer Setup
+// =======================
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = "public/uploads";
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const filename = `${Date.now()}-${file.fieldname}${ext}`;
+    cb(null, filename);
+  },
+});
+const upload = multer({ storage });
 
 // =======================
 // 🔐 Middleware
 // =======================
-
 const authenticateToken = (req, res, next) => {
   const token = req.header("Authorization")?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Access denied. No token provided." });
-  }
+  if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -53,8 +69,6 @@ const authenticateLandlord = (req, res, next) => {
 router.post("/register", async (req, res) => {
   const { name, email, password, role, phone } = req.body;
 
-  console.log("📌 Register Payload:", req.body);
-
   try {
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, Email, and Password are required" });
@@ -84,7 +98,6 @@ router.post("/register", async (req, res) => {
 // =======================
 router.post("/login", async (req, res) => {
   const { email, password, role } = req.body;
-  console.log("📌 Login Attempt:", req.body);
 
   try {
     const user = await User.findOne({ email });
@@ -97,13 +110,11 @@ router.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(400).json({ message: "Invalid credentials" });
 
-    // ✅ Check propertyId for tenants
+    // ✅ Fetch propertyId assigned to tenant (if applicable)
     let propertyId = null;
     if (user.role === "tenant") {
       const property = await Property.findOne({ tenantId: user._id }).select("_id");
-      console.log("📦 Found property:", property); // ✅ moved inside
       propertyId = property?._id || null;
-      console.log("📦 Assigned propertyId:", propertyId); // ✅ optional log
     }
 
     const token = jwt.sign(
@@ -112,7 +123,6 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // ✅ Send response with propertyId
     res.status(200).json({
       message: "Login successful",
       token,
@@ -122,7 +132,8 @@ router.post("/login", async (req, res) => {
         email: user.email,
         role: user.role,
         phone: user.phone,
-        propertyId: propertyId,
+        avatar: user.avatar,
+        propertyId, // ✅ included
       },
     });
   } catch (error) {
@@ -159,28 +170,30 @@ router.get("/tenant/profile", authenticateTenant, async (req, res) => {
 });
 
 // =======================
-// 🔍 Admin: All Users
+// 🛠️ Update Profile with Avatar Upload
 // =======================
-router.get("/all", authenticateLandlord, async (req, res) => {
+router.put("/profile/update", authenticateToken, upload.single("avatar"), async (req, res) => {
   try {
-    const users = await User.find().select("-password");
-    res.json(users);
-  } catch (error) {
-    console.error("❌ Fetch All Users Error:", error);
-    res.status(500).json({ message: "Error fetching users" });
-  }
-});
+    console.log("📥 File received:", req.file);
+    console.log("📝 Body received:", req.body);
 
-// =======================
-// 🛠️ Update Profile
-// =======================
-router.put("/profile/update", authenticateToken, async (req, res) => {
-  const { name, phone } = req.body;
+    const { name, phone, address } = req.body;
 
-  try {
+    let avatarUrl;
+    if (req.file) {
+      avatarUrl = `/uploads/${req.file.filename}`;
+    }
+
+    const updatedFields = {
+      name,
+      phone,
+      address,
+      ...(avatarUrl && { avatar: avatarUrl }),
+    };
+
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { name, phone },
+      updatedFields,
       { new: true, runValidators: true }
     ).select("-password");
 
@@ -205,6 +218,19 @@ router.delete("/delete", authenticateTenant, async (req, res) => {
   } catch (error) {
     console.error("❌ Delete Account Error:", error);
     res.status(500).json({ message: "Error deleting account" });
+  }
+});
+
+// =======================
+// 🧾 Get All Users (Landlord)
+// =======================
+router.get("/all", authenticateLandlord, async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    console.error("❌ Fetch All Users Error:", error);
+    res.status(500).json({ message: "Error fetching users" });
   }
 });
 

@@ -34,31 +34,27 @@ export default function Login() {
 
       if (response.ok) {
         const user = data.user;
-        
-        // ✅ Store in localStorage
+
+        // ✅ Save token + user in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
 
-        // ✅ Save IDs if valid
+        // ✅ Save tenantId and propertyId if valid
         if (user.id?.length === 24) {
           localStorage.setItem("tenantId", user.id);
-        } else {
-          console.warn("⚠️ Invalid tenantId, not saved.");
         }
 
         if (user.propertyId?.length === 24) {
           localStorage.setItem("propertyId", user.propertyId);
-        } else {
-          console.warn("⚠️ propertyId not found or invalid. Not saved.");
         }
 
-        // ✅ Clear form
+        // ✅ Clear form state
         setEmail("");
         setPassword("");
         setRole("tenant");
 
-        // ✅ Redirect
+        // ✅ Redirect based on role
         if (role === "tenant") {
           router.push("/tenant");
         } else {

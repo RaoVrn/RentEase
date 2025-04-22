@@ -1,66 +1,66 @@
-/* styles/tenantPayments.module.css */
+/* ✅ styles/tenantPayments.module.css */
+
 .pageContainer {
-    display: flex;
-    min-height: 100vh;
-    background-color: #0f172a; /* Tailwind slate-900 */
-    color: #f8fafc; /* Tailwind slate-100 */
-  }
-  
-  .mainContent {
-    flex: 1;
-    padding: 2rem;
-  }
-  
-  .pageTitle {
-    font-size: 1.875rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-  
-  .pageSubtitle {
-    color: #94a3b8; /* slate-400 */
-    margin-bottom: 1.5rem;
-  }
-  
-  .tableContainer {
-    overflow-x: auto;
-    background-color: #1e293b; /* slate-800 */
-    border-radius: 0.5rem;
-    padding: 1rem;
-  }
-  
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .table th,
-  .table td {
-    padding: 0.75rem;
-    border-bottom: 1px solid #334155; /* slate-700 */
-  }
-  
-  .table th {
-    background-color: #334155;
-    text-align: left;
-    color: #f1f5f9; /* slate-100 */
-  }
-  
-  .table tr:hover {
-    background-color: #475569; /* slate-600 */
-  }
-  
-  .statusPaid {
-    color: #22c55e; /* green-500 */
-    font-weight: 600;
-  }
-  
-  .statusPending {
-    color: #facc15; /* yellow-400 */
-    font-weight: 600;
-  }
-  
-  .noPayments {
-    color: #cbd5e1;
-  }
-  
+  display: flex;
+  min-height: 100vh;
+  background-color: #0f172a; /* Tailwind slate-900 */
+  color: #f8fafc; /* Tailwind slate-100 */
+}
+
+.mainContent {
+  flex: 1;
+  padding: 2rem;
+}
+
+.pageTitle {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;     /* font-bold */
+  margin-bottom: 0.5rem;
+}
+
+.pageSubtitle {
+  color: #94a3b8; /* slate-400 */
+  margin-bottom: 1.5rem;
+}
+
+.tableContainer {
+  overflow-x: auto;
+  background-color: #1e293b; /* slate-800 */
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #334155; /* slate-700 */
+}
+
+.table th {
+  background-color: #334155; /* slate-700 */
+  text-align: left;
+  color: #f1f5f9; /* slate-100 */
+}
+
+.table tr:hover {
+  background-color: #475569; /* slate-600 */
+}
+
+.statusPaid {
+  color: #22c55e; /* green-500 */
+  font-weight: 600;
+}
+
+.statusPending {
+  color: #facc15; /* yellow-400 */
+  font-weight: 600;
+}
+
+.noPayments {
+  color: #cbd5e1; /* slate-300 */
+}

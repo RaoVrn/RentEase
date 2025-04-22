@@ -29,8 +29,27 @@ const UserSchema = new mongoose.Schema(
       default: null,
       trim: true,
     },
+    address: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    avatar: {
+      type: String,
+      default: "", // Example: "/uploads/avatar123.jpg"
+    },
+    joinedAt: {
+      type: Date,
+      default: Date.now, // Optional: could use timestamps.createdAt instead
+    },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true, // Adds createdAt and updatedAt automatically
+  }
 );
 
 export default mongoose.model("User", UserSchema);

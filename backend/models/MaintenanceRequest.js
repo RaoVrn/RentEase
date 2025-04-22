@@ -26,10 +26,24 @@ const MaintenanceRequestSchema = new mongoose.Schema({
         enum: ["Pending", "In Progress", "Resolved"],
         default: "Pending",
     },
+    priority: {
+        type: String,
+        enum: ["Low", "Medium", "High", "Emergency"],
+        default: "Medium"
+    },
     requestDate: {
         type: Date,
         default: Date.now,
-    }
+    },
+    resolvedDate: {
+        type: Date,
+        default: null
+    },
+    comments: [{
+        text: String,
+        date: { type: Date, default: Date.now },
+        author: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+    }]
 }, {
     timestamps: true
 });
