@@ -1,46 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import TenantSidebar from "../../components/TenantSidebar";
+import { AuthContext } from "../../context/AuthContext";
 import styles from "../../styles/tenantApplications.module.css";
 
 const Applications = () => {
+  const { user } = useContext(AuthContext);
   const router = useRouter();
-  const { tenantId: paramTenantId } = router.query;
-
   const [applications, setApplications] = useState([]);
   const [error, setError] = useState(null);
   const [socket, setSocket] = useState(null);
-  const [tenantId, setTenantId] = useState(null);
 
-  // ✅ Get tenantId from JWT token
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          console.log("Decoded JWT Payload:", payload);
-
-          if (payload?.id) {
-            setTenantId(payload.id);
-          } else {
-            setError("Tenant ID not found in token.");
-          }
-        } catch (err) {
-          console.error("Token decoding error:", err);
-          setError("Invalid token. Please log in again.");
-        }
-      } else {
-        setError("No authentication token found. Please log in.");
-      }
-    }
-  }, []);
-
-  // ✅ Connect to socket only after tenantId is available
-  useEffect(() => {
-    const activeTenantId = paramTenantId || tenantId;
-
-    if (!activeTenantId) return;
+    if (!user?.id) return;
 
     let newSocket;
 
@@ -48,7 +20,7 @@ const Applications = () => {
       newSocket = io("http://localhost:5000");
       setSocket(newSocket);
 
-      newSocket.emit("getApplications", activeTenantId);
+      newSocket.emit("getApplications", user.id);
 
       newSocket.on("applicationsData", (data) => {
         setApplications(data);
@@ -65,7 +37,7 @@ const Applications = () => {
         newSocket.disconnect();
       }
     };
-  }, [paramTenantId, tenantId]);
+  }, [user?.id]);
 
   return (
     <div className={styles.applicationsContainer}>

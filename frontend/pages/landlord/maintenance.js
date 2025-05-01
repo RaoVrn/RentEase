@@ -16,29 +16,38 @@ const Maintenance = () => {
     const [sortBy, setSortBy] = useState('date');
 
     useEffect(() => {
-        if (!user || user.role !== 'landlord') {
-            router.push('/login');
-            return;
-        }
+        if (!user?.id) return;
         fetchRequests();
-    }, [user]);
+    }, [user?.id]);
 
     const fetchRequests = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`/api/landlord/${user.id}/maintenance-requests`, {
+            if (!token || !user?.id) {
+                router.push('/login');
+                return;
+            }
+
+            const response = await fetch(`/api/tenant/landlord/${user.id}/maintenance-requests`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (!response.ok) throw new Error('Failed to fetch maintenance requests');
-
             const data = await response.json();
-            setRequests(data);
+
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    router.push('/login');
+                    return;
+                }
+                throw new Error(data.message || 'Failed to fetch maintenance requests');
+            }
+
+            setRequests(data || []);
         } catch (err) {
             console.error('Failed to fetch maintenance requests:', err);
-            setError('Failed to load maintenance requests. Please try again.');
+            setError(err.message || 'Failed to load maintenance requests. Please try again.');
             toast.error('Failed to load maintenance requests');
         } finally {
             setLoading(false);

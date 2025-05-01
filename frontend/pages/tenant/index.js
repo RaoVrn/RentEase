@@ -23,24 +23,14 @@ const TenantDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-
-    const tenantId = user?._id;
-
-    if (!tenantId) {
-      console.warn("🚨 No tenantId available — skipping fetch");
-      return;
-    }
-
+    if (!user?._id) return;
+    
     async function fetchData() {
       try {
         const [appRes, payRes, maintRes] = await Promise.all([
-          fetch(`/api/applications/${tenantId}`).then((res) => res.json()),
-          fetch(`/api/payments/${tenantId}`).then((res) => res.json()),
-          fetch(`/api/maintenance/${tenantId}`).then((res) => res.json()),
+          fetch(`/api/applications/${user._id}`).then((res) => res.json()),
+          fetch(`/api/payments/${user._id}`).then((res) => res.json()),
+          fetch(`/api/maintenance/${user._id}`).then((res) => res.json()),
         ]);
 
         setApplications(Array.isArray(appRes) ? appRes : []);
@@ -54,7 +44,7 @@ const TenantDashboard = () => {
     }
 
     fetchData();
-  }, [user]);
+  }, [user?._id]);
 
   return (
     <div className={styles.tenantDashboard}>

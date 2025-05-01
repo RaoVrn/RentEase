@@ -18,12 +18,9 @@ const Maintenance = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
-      return;
-    }
+    if (!user?.id) return;
     fetchRequests();
-  }, [user]);
+  }, [user?.id]);
 
   const fetchRequests = async () => {
     try {

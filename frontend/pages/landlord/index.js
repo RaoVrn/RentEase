@@ -27,44 +27,40 @@ const LandlordDashboard = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!user || user.role !== "landlord") {
-      router.push("/login");
-      return;
-    }
-
-    const fetchDashboardData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const headers = {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        };
-
-        const [propertiesRes, applicationsRes, paymentsRes, maintenanceRes] = await Promise.all([
-          fetch(`/api/landlord/${user.id}/properties`, { headers }),
-          fetch(`/api/landlord/${user.id}/applications`, { headers }),
-          fetch(`/api/landlord/${user.id}/payments`, { headers }),
-          fetch(`/api/landlord/${user.id}/maintenance-requests`, { headers })
-        ]);
-
-        const [properties, applications, payments, maintenance] = await Promise.all([
-          propertiesRes.json(),
-          applicationsRes.json(),
-          paymentsRes.json(),
-          maintenanceRes.json()
-        ]);
-
-        setDashboardData({ properties, applications, payments, maintenance });
-      } catch (err) {
-        console.error("Failed to fetch dashboard data:", err);
-        setError("Failed to load dashboard data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    if (!user?.id) return;
     fetchDashboardData();
-  }, [user]);
+  }, [user?.id]);
+
+  const fetchDashboardData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      };
+
+      const [propertiesRes, applicationsRes, paymentsRes, maintenanceRes] = await Promise.all([
+        fetch(`/api/landlord/${user.id}/properties`, { headers }),
+        fetch(`/api/landlord/${user.id}/applications`, { headers }),
+        fetch(`/api/landlord/${user.id}/payments`, { headers }),
+        fetch(`/api/landlord/${user.id}/maintenance-requests`, { headers })
+      ]);
+
+      const [properties, applications, payments, maintenance] = await Promise.all([
+        propertiesRes.json(),
+        applicationsRes.json(),
+        paymentsRes.json(),
+        maintenanceRes.json()
+      ]);
+
+      setDashboardData({ properties, applications, payments, maintenance });
+    } catch (err) {
+      console.error("Failed to fetch dashboard data:", err);
+      setError("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Safely calculate total revenue with validation
   const totalRevenue = Array.isArray(dashboardData.payments) 
@@ -117,7 +113,7 @@ const LandlordDashboard = () => {
           <motion.div className={styles.statsCard} whileHover={{ scale: 1.05 }}>
             <FaDollarSign className={styles.statsIcon} />
             <div className={styles.statsInfo}>
-              <h3>${totalRevenue.toLocaleString()}</h3>
+              <h3>₹{totalRevenue.toLocaleString()}</h3>
               <p>Total Revenue</p>
             </div>
           </motion.div>

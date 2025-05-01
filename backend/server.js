@@ -13,6 +13,7 @@ import propertyRoutes from "./routes/propertyRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import geminiRoutes from "./routes/geminiRoutes.js";
 import tenantRoutes from "./routes/tenantRoutes.js";
+import landlordRoutes from "./routes/landlordRoutes.js";
 
 import RentApplication from "./models/RentApplication.js";
 
@@ -61,6 +62,7 @@ app.use("/api/properties", propertyRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/gemini", geminiRoutes);
 app.use("/api/tenant", tenantRoutes);
+app.use("/api/landlord", landlordRoutes);
 
 // ✅ WebSocket Events
 io.on("connection", (socket) => {

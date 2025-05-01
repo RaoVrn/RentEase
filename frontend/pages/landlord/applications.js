@@ -15,12 +15,9 @@ const Applications = () => {
     const [filter, setFilter] = useState('all');
 
     useEffect(() => {
-        if (!user || user.role !== 'landlord') {
-            router.push('/login');
-            return;
-        }
+        if (!user?.id) return;
         fetchApplications();
-    }, [user]);
+    }, [user?.id]);
 
     const fetchApplications = async () => {
         try {
@@ -30,9 +27,10 @@ const Applications = () => {
                 return;
             }
 
-            const response = await fetch(`/api/landlord/${user.id}/applications`, {
+            const response = await fetch(`/api/tenant/landlord/${user.id}/applications`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
 
@@ -50,6 +48,8 @@ const Applications = () => {
         } catch (error) {
             console.error('Error fetching applications:', error);
             setError(error.message || 'Failed to fetch applications');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -126,7 +126,7 @@ const Applications = () => {
     // Filter applications based on status
     const filteredApplications = applications.filter(app => {
         if (filter === 'all') return true;
-        return app.status.toLowerCase() === filter;
+        return app.status.toLowerCase() === filter.toLowerCase();
     });
 
     if (loading) return (

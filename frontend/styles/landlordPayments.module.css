@@ -1,0 +1,87 @@
+.pageContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: #0f172a; /* Tailwind slate-900 */
+  color: #f8fafc; /* Tailwind slate-100 */
+}
+
+.mainContent {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 250px; /* Match sidebar width */
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 0.5rem;
+}
+
+.tableContainer {
+  background-color: #1e293b; /* slate-800 */
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #334155; /* slate-700 */
+}
+
+.table th {
+  background-color: #334155; /* slate-700 */
+  font-weight: 600;
+  color: #f1f5f9; /* slate-100 */
+}
+
+.table tbody tr:hover {
+  background-color: #1e293b; /* slate-800 */
+}
+
+.statusPaid {
+  color: #22c55e; /* green-500 */
+  font-weight: 600;
+}
+
+.statusPending {
+  color: #facc15; /* yellow-400 */
+  font-weight: 600;
+}
+
+.noPayments {
+  text-align: center;
+  padding: 2rem;
+  background-color: #1e293b; /* slate-800 */
+  border-radius: 0.5rem;
+  color: #94a3b8; /* slate-400 */
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #f8fafc;
+}
+
+.error {
+  text-align: center;
+  color: #ef4444; /* red-500 */
+  padding: 1rem;
+  margin: 1rem 0;
+  background-color: #1e293b;
+  border-radius: 0.5rem;
+}
