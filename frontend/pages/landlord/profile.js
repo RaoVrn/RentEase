@@ -79,10 +79,9 @@ const Profile = () => {
             const token = localStorage.getItem('token');
             const formData = new FormData();
             
+            // Add all fields to formData
             Object.keys(tempProfile).forEach(key => {
-                if (tempProfile[key] !== profile[key]) {
-                    formData.append(key, tempProfile[key]);
-                }
+                formData.append(key, tempProfile[key] || '');
             });
 
             if (avatarFile) {
@@ -97,15 +96,32 @@ const Profile = () => {
                 body: formData
             });
 
-            if (!response.ok) throw new Error('Failed to update profile');
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to update profile');
+            }
 
-            const data = await response.json();
-            setProfile(data);
+            const result = await response.json();
+            const updatedProfile = result.user || result;
+
+            // Update all states with new data
+            setProfile(updatedProfile);
+            setTempProfile(updatedProfile);
+            
+            // Update avatar preview with cache-busting
+            const newAvatarUrl = updatedProfile.avatar 
+                ? updatedProfile.avatar.startsWith('http')
+                    ? updatedProfile.avatar
+                    : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${updatedProfile.avatar}`
+                : '/default-avatar.jpg';
+            
+            setPreview(`${newAvatarUrl}?t=${Date.now()}`);
+            setAvatarFile(null);
             setEditing(false);
             toast.success('Profile updated successfully');
         } catch (err) {
             console.error('Failed to update profile:', err);
-            toast.error('Failed to update profile');
+            toast.error(err.message || 'Failed to update profile');
         }
     };
 
