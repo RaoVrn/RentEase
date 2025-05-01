@@ -22,6 +22,11 @@ const messageSchema = new mongoose.Schema(
       ref: "Tenant",
       required: true,
     },
+    propertyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Property",
+      required: true,
+    },
   },
   { timestamps: true }
 );

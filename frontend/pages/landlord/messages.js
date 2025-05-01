@@ -31,24 +31,46 @@ const Messages = () => {
 
     const fetchConversations = async () => {
         try {
+            setLoading(true);
+            setError('');
             const token = localStorage.getItem('token');
+            
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            if (!user?.id) {
+                throw new Error('User ID not found');
+            }
+
+            console.log('🟢 Fetching conversations for user:', user.id);
             const response = await fetch(`/api/landlord/${user.id}/conversations`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (!response.ok) throw new Error('Failed to fetch conversations');
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('❌ API Error:', errorData);
+                throw new Error(errorData.message || 'Failed to fetch conversations');
+            }
 
             const data = await response.json();
+            console.log('🟢 Received conversations:', data.length);
+            
+            if (!Array.isArray(data)) {
+                throw new Error('Invalid response format: expected an array');
+            }
+
             setConversations(data);
             if (data.length > 0 && !selectedTenant) {
                 setSelectedTenant(data[0]);
             }
         } catch (err) {
-            console.error('Failed to fetch conversations:', err);
-            setError('Failed to load conversations');
-            toast.error('Failed to load conversations');
+            console.error('❌ Failed to fetch conversations:', err);
+            setError(err.message || 'Failed to load conversations');
+            toast.error(err.message || 'Failed to load conversations');
         } finally {
             setLoading(false);
         }
@@ -57,45 +79,70 @@ const Messages = () => {
     const fetchMessages = async (tenantId) => {
         try {
             const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            console.log('🟢 Fetching messages for tenant:', tenantId);
             const response = await fetch(`/api/landlord/messages/${tenantId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (!response.ok) throw new Error('Failed to fetch messages');
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('❌ API Error:', errorData);
+                throw new Error(errorData.message || 'Failed to fetch messages');
+            }
 
             const data = await response.json();
+            console.log('🟢 Received messages:', data.length);
             setMessages(data);
         } catch (err) {
-            console.error('Failed to fetch messages:', err);
-            toast.error('Failed to load messages');
+            console.error('❌ Failed to fetch messages:', err);
+            toast.error(err.message || 'Failed to load messages');
         }
     };
 
     const handleSendMessage = async (content) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('/api/messages', {
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            if (!selectedTenant?._id) {
+                throw new Error('No tenant selected');
+            }
+
+            console.log('🟢 Sending message to tenant:', selectedTenant._id);
+            const response = await fetch('/api/landlord/messages', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    recipientId: selectedTenant._id,
-                    content,
-                    senderId: user.id
+                    tenantId: selectedTenant._id,
+                    text: content
                 })
             });
 
-            if (!response.ok) throw new Error('Failed to send message');
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('❌ API Error:', errorData);
+                throw new Error(errorData.message || 'Failed to send message');
+            }
 
             const newMessage = await response.json();
+            console.log('🟢 Message sent successfully');
             setMessages(prev => [...prev, newMessage]);
+            // Refresh conversations to update last message
+            fetchConversations();
         } catch (err) {
-            console.error('Failed to send message:', err);
-            toast.error('Failed to send message');
+            console.error('❌ Failed to send message:', err);
+            toast.error(err.message || 'Failed to send message');
         }
     };
 
@@ -124,6 +171,11 @@ const Messages = () => {
                                     <div className={styles.tenantInfo}>
                                         <h3>{tenant.name}</h3>
                                         <p>{tenant.propertyName || 'Property not assigned'}</p>
+                                        {tenant.lastMessage && (
+                                            <p className={styles.lastMessage}>
+                                                {tenant.lastMessage.text}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             ))}
